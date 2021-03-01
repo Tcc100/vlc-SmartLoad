@@ -60,20 +60,23 @@ function arrayContains(value, arr)
     return false
 end
 
-function getFolder(path)
-    local url = vlc.strings.url_parse(path)
+function uriToPath(path_uri)
+    if string.find(path_uri, " ") then
+        path_uri = string.gsub(path_uri, " ", "%%20")
+    end
+--    vlc.msg.dbg(path_uri)
+    local url = vlc.strings.url_parse(path_uri)
     local path = url.path
     path = vlc.strings.decode_uri(path)
-    path = string.match(path, ".*[\\\\/]")
     return path
 end
 
-function getFilename(path)
-    local url = vlc.strings.url_parse(path)
-    local path = url.path
-    path = vlc.strings.decode_uri(path)
-    path = string.match(path, "[^\\\\/]*$")
-    return path
+function getFolder(path_uri)
+    return string.match(uriToPath(path_uri), ".*[\\\\/]")
+end
+
+function getFilename(path_uri)
+    return string.match(uriToPath(path_uri), "[^\\\\/]*$")
 end
 
 function deactivate()
